@@ -52,6 +52,7 @@ export default function HomePage() {
     { path: "/photos", description: "Rasmlar", count: "5000 ta" },
     { path: "/todos", description: "Vazifalar", count: "200 ta" },
     { path: "/users", description: "Foydalanuvchilar", count: "10 ta" },
+    { path: "/patterns", description: "O'zbek naqshlari", count: "∞ ta", isNew: true },
   ]
 
   return (
@@ -76,9 +77,12 @@ export default function HomePage() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-amber-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">UZ</span>
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-amber-600 bg-clip-text text-transparent">
-                JsonXon
-              </h1>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-amber-600 bg-clip-text text-transparent">
+                  JsonXon
+                </h1>
+                <span className="text-xs text-gray-500">by Uzbekify</span>
+              </div>
             </div>
             <div className="flex items-center space-x-6">
               <Link href="/guide" className="text-gray-600 hover:text-blue-600 transition-colors">
@@ -104,15 +108,19 @@ export default function HomePage() {
               <span className="text-white font-bold text-lg">🇺🇿</span>
             </div>
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-amber-600 bg-clip-text text-transparent">
-              JsonXon Placeholder
+              JsonXon
             </h1>
           </div>
 
-          <p className="text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 mb-2 max-w-2xl mx-auto">
             Test va prototiplash uchun bepul va ishonchli API xizmati
           </p>
 
-          <p className="text-lg text-gray-500 mb-8">O'zbek madaniyati bilan boyitilgan • Turli xil uslublar bilan</p>
+          <p className="text-lg text-gray-500 mb-2">O'zbek madaniyati bilan boyitilgan • Turli xil uslublar bilan</p>
+
+          <p className="text-sm text-blue-600 mb-8">
+            <span className="font-semibold">Uzbekify</span> tomonidan yaratilgan - O'zbek uslubidagi dasturiy ta'minot
+          </p>
 
           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 mb-8">
             <div className="flex items-center space-x-2">
@@ -161,13 +169,23 @@ export default function HomePage() {
             {endpoints.map((endpoint, index) => (
               <Card
                 key={endpoint.path}
-                className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-blue-500 bg-gradient-to-br from-white to-blue-50"
+                className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 ${
+                  endpoint.isNew
+                    ? "border-l-amber-500 bg-gradient-to-br from-amber-50 to-white"
+                    : "border-l-blue-500 bg-gradient-to-br from-white to-blue-50"
+                }`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{endpoint.description}</CardTitle>
-                    <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                    <CardTitle className="text-lg flex items-center space-x-2">
+                      <span>{endpoint.description}</span>
+                      {endpoint.isNew && <Badge className="bg-amber-500 text-white text-xs">YANGI</Badge>}
+                    </CardTitle>
+                    <Badge
+                      variant="secondary"
+                      className={endpoint.isNew ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"}
+                    >
                       {endpoint.count}
                     </Badge>
                   </div>
@@ -181,7 +199,7 @@ export default function HomePage() {
                     size="sm"
                     className="w-full hover:bg-blue-50 bg-transparent"
                     onClick={() => {
-                      navigator.clipboard.writeText(`https://jsonxon.bekhruzbek.uz/api${endpoint.path}?style=${selectedStyle}`)
+                      navigator.clipboard.writeText(`https://jsonxon.uz/api${endpoint.path}?style=${selectedStyle}`)
                     }}
                   >
                     <Copy className="w-4 h-4 mr-2" />
@@ -191,6 +209,43 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
+        </div>
+
+        {/* Pattern Generation Demo */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">O'zbek naqsh generatori</h2>
+
+          <Card className="max-w-4xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-center">Naqsh namunalari</CardTitle>
+              <CardDescription className="text-center">
+                API orqali turli xil o'zbek naqshlarini yarating
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {["geometric", "floral", "ceramic", "textile"].map((type) => (
+                  <div key={type} className="text-center">
+                    <div className="w-full h-32 bg-gray-100 rounded-lg mb-2 overflow-hidden">
+                      <img
+                        src={`/api/patterns?type=${type}&size=200&colors=blue,gold,turquoise`}
+                        alt={`${type} naqsh`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <p className="text-sm font-medium capitalize">{type}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-4">API orqali o'z naqshlaringizni yarating:</p>
+                <code className="bg-gray-100 px-4 py-2 rounded text-sm">
+                  /api/patterns?type=geometric&size=400&colors=blue,gold&complexity=5
+                </code>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Example Usage */}
@@ -208,7 +263,7 @@ export default function HomePage() {
               <Card>
                 <CardContent className="p-6">
                   <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto">
-                    <code>{`fetch('https://jsonxon.bekhruzbek.uz/api/posts?style=${selectedStyle}')
+                    <code>{`fetch('https://jsonxon.uz/api/posts?style=${selectedStyle}')
   .then(response => response.json())
   .then(json => console.log(json))`}</code>
                   </pre>
@@ -220,7 +275,7 @@ export default function HomePage() {
               <Card>
                 <CardContent className="p-6">
                   <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto">
-                    <code>{`axios.get('https://jsonxon.bekhruzbek.uz/api/posts?style=${selectedStyle}')
+                    <code>{`axios.get('https://jsonxon.uz/api/posts?style=${selectedStyle}')
   .then(response => {
     console.log(response.data);
   });`}</code>
@@ -233,7 +288,7 @@ export default function HomePage() {
               <Card>
                 <CardContent className="p-6">
                   <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto">
-                    <code>{`curl -X GET "https://jsonxon.bekhruzbek.uz/api/posts?style=${selectedStyle}" \\
+                    <code>{`curl -X GET "https://jsonxon.uz/api/posts?style=${selectedStyle}" \\
      -H "Accept: application/json"`}</code>
                   </pre>
                 </CardContent>
@@ -277,10 +332,13 @@ export default function HomePage() {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-amber-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">🇺🇿</span>
             </div>
-            <h3 className="text-xl font-bold">UzbekJSON</h3>
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-bold">JsonXon</h3>
+              <span className="text-sm text-gray-400">by Uzbekify</span>
+            </div>
           </div>
-          <p className="text-gray-400 mb-4">O'zbek dasturchilar uchun yaratilgan bepul JSON API xizmati</p>
-          <p className="text-sm text-gray-500">© 2024 UzbekJSON. Barcha huquqlar himoyalangan.</p>
+          <p className="text-gray-400 mb-4">O'zbek uslubidagi dasturiy ta'minot va xizmatlar yaratamiz</p>
+          <p className="text-sm text-gray-500">© 2024 Uzbekify. Barcha huquqlar himoyalangan.</p>
         </div>
       </footer>
     </div>
